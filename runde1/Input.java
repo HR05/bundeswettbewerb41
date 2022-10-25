@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Input {
   
   public static void main(String[] args){
-    String test = getText("runde1/Aufgabe1/Alice_im_Wunderland.txt");
+    String test = getText("runde1/Aufgabe1/Alice_im_Wunderland.txt", false);
     System.out.println(test);
 
   }
@@ -34,7 +34,7 @@ public class Input {
     return null;
   }
   
-  public static String getText(String path){
+  public static String getText(String path, boolean lowerCase){
      try {
       File file = new File(path);
       Scanner reader = new Scanner(file);
@@ -43,6 +43,10 @@ public class Input {
         content += reader.nextLine() + "\n";
       }
       reader.close();
+
+      if(lowerCase){
+        content = content.toLowerCase();
+      }
       return content;
       
     } catch(FileNotFoundException e){
