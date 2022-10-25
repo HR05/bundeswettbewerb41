@@ -1,3 +1,5 @@
+package runde1;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
@@ -6,7 +8,7 @@ import java.util.ArrayList;
 public class Input {
   
   public static void main(String[] args){
-    String test = getText("Aufgabe1/Alice_im_Wunderland.txt");
+    String test = getText("runde1/Aufgabe1/Alice_im_Wunderland.txt");
     System.out.println(test);
 
   }
