@@ -1,14 +1,15 @@
-package runde1;
+package runde1.Aufgabe1;
 
+import runde1.Input;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 
-public class Aufgabe1 {
-  public static String text = Input.getText("./runde1/Aufgabe1/Alice_im_Wunderland.txt", true);
+public class Main {
+  public static String text = Input.getText("runde1/Aufgabe1/Input/Alice_im_Wunderland.txt", true);
 
   public static void main(String[] args){
     for(int i = 0; i <= 5; i++){
-      String searchPhrase = Input.getLine("./runde1/Aufgabe1/stoerung" + i + ".txt");
+      String searchPhrase = Input.getLine("./runde1/Aufgabe1/Input/stoerung" + i + ".txt");
       String phrase = search(searchPhrase);
       System.out.println(phrase);
     }

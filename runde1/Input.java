@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public class Input {
   
   public static void main(String[] args){
-    String test = getText("runde1/Aufgabe1/Alice_im_Wunderland.txt", false);
+    String test = getText("runde1/Aufgabe1/Input/Alice_im_Wunderland.txt", false);
     System.out.println(test);
 
   }
