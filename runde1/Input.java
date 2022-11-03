@@ -6,18 +6,16 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 public class Input {
-  
-  public static void main(String[] args){
-    String test = getText("runde1/Aufgabe1/Input/Alice_im_Wunderland.txt", false);
-    System.out.println(test);
-
-  }
-
+  /**
+   * read a file and convert it to a string array
+   * @param path path to the input file
+   * @return a string array where one string represents one line
+   */
   public static String[] getLines(String path){
     try {
       File file = new File(path);
       Scanner reader = new Scanner(file);
-      ArrayList<String> content = new ArrayList<String>();
+      ArrayList<String> content = new ArrayList<>();
       while(reader.hasNextLine()){
         content.add(reader.nextLine());
       }
@@ -33,7 +31,13 @@ public class Input {
     
     return null;
   }
-  
+
+  /**
+   * read an input file
+   * @param path path to the input file
+   * @param lowerCase if true content of file is converted to lower case
+   * @return the whole content of the file as a string also containing line breaks
+   */
   public static String getText(String path, boolean lowerCase){
      try {
       File file = new File(path);
@@ -56,7 +60,11 @@ public class Input {
     return null;
   }
 
-  
+  /**
+   * reads the first line of a file
+   * @param path path to the input file
+   * @return the first line of the file as a String
+   */
   public static String getLine(String path){
     try {
       File file = new File(path);

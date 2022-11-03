@@ -6,15 +6,47 @@ import java.util.Comparator;
 import java.util.OptionalDouble;
 
 public class Simulation {
+  /**
+   * a list of all tasks which are going to be received
+   */
   ArrayList<Task> tasks;
+  /**
+   * list of task which where received
+   */
   ArrayList<Task> taskQueue = new ArrayList<>();
+  /**
+   * task which is currently worked on
+   */
   Task currentTask = null;
-  final int startTime = 540; // 9h
-  final int endTime = 1020; // 17h
+  /**
+   * 9h converted to minutes
+   * start of work day
+   */
+  final int startTime = 540;
+  /**
+   * 17h converted to minutes
+   * end of work day
+   */
+  final int endTime = 1020;
+  /**
+   * variant of the simulation
+   * variant = 0: work on the tasks in order
+   * variant = 1: work always on shortest task which in the taskQueue
+   */
   int variant;
+  /**
+   * absolute time in minutes
+   */
   int time = 0;
+  /**
+   * relative time in minutes
+   * maximum 1440 minutes (24h)
+   */
   int relativeTime = 0;
-
+  /**
+   * a list of all waiting times
+   * the waiting time is the difference between the receiving time and the finishing time of the task
+   */
   ArrayList<Integer> waitTime = new ArrayList<>();
 
   public Simulation(ArrayList<Task> tasks, int variant){
@@ -23,7 +55,7 @@ public class Simulation {
   }
 
   /**
-   *
+   * get the maximum waiting time and compute the average waiting time
    * @return maximum waiting time, average waiting time
    */
   public double[] getWaitTimes(){
@@ -33,6 +65,9 @@ public class Simulation {
     return new double[]{maxWaitTime, averageWaitTime};
   }
 
+  /**
+   * run the simulation until all tasks are finished
+   */
   public void run(){
     time = 0;
     while(tasksNotDone()){
@@ -40,7 +75,12 @@ public class Simulation {
     }
   }
 
-  public void runDay(){
+  /**
+   * one work day
+   * starts at 9h
+   * ends at 17h or when all tasks are done
+   */
+  private void runDay(){
     relativeTime = startTime;
 
     while(relativeTime <  endTime && tasksNotDone()) {
@@ -53,11 +93,15 @@ public class Simulation {
     }
   }
 
-  public boolean tasksNotDone(){
+  /**
+   * looks if all tasks are finished
+   * @return tasks are not done -> true, tasks are done -> false
+   */
+  private boolean tasksNotDone(){
     return tasks.size() != 0 || taskQueue.size() != 0 || currentTask != null;
   }
 
-  public void workOnCurrentTask(){
+  private void workOnCurrentTask(){
     // look if task can be done before the end
     int delta_time = endTime - relativeTime; // time left to work
     if(delta_time < currentTask.duration){
@@ -74,7 +118,7 @@ public class Simulation {
     }
   }
 
-  public void setCurrentTask(){
+  private void setCurrentTask(){
     if(taskQueue.size() != 0) {
       if (variant == 0) {
         // select the tasks order
@@ -89,7 +133,7 @@ public class Simulation {
     }
   }
 
-  public void addTasksToQueue(){
+  private void addTasksToQueue(){
     int addedTasks = 0;
     for(Task task: tasks){
       // task hasn't been received yet

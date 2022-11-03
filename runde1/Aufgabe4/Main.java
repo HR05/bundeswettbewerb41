@@ -5,6 +5,11 @@ import runde1.Input;
 import java.util.ArrayList;
 
 public class Main {
+  /**
+   * get the tasks from a given input file
+   * @param path path to the input file
+   * @return returns an ArrayList of the tasks
+   */
   public static ArrayList<Task> getTasks(String path){
     String[] lines = Input.getLines(path);
     ArrayList<Task> tasks = new ArrayList<>();
@@ -18,6 +23,12 @@ public class Main {
     return tasks;
   }
 
+  /**
+   * clone an ArrayList of tasks
+   * every task inside this list is cloned
+   * @param tasks an ArrayList which should be cloned
+   * @return complete new ArrayList which is an exact copy of the @param tasks
+   */
   public static ArrayList<Task> cloneTasks(ArrayList<Task> tasks){
     ArrayList<Task> newTasks = new ArrayList<>();
     for(Task task: tasks){
@@ -41,6 +52,13 @@ public class Main {
     }
   }
 
+  /**
+   * prints the waiting times in a readable format
+   * @param i index of the input file
+   * @param variant variant which is used for the simulation
+   * @param maxWaitTime maximum waiting time
+   * @param averageWaitTime average waiting time
+   */
   public static void printWaitTimes(int i, int variant, double maxWaitTime, double averageWaitTime){
     System.out.printf("Input: fahrradwerkstatt%d.txt | Variant: %d\n", i, variant);
     System.out.printf("  maximum waiting time: %.0f min\n", maxWaitTime);

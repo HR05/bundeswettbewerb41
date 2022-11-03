@@ -1,6 +1,9 @@
 package runde1.Aufgabe4;
 
 public class Task {
+  /**
+   * receiving time
+   */
   public int time;
   public int duration;
 
