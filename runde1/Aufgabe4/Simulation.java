@@ -28,6 +28,7 @@ public class Simulation {
    * end of work day
    */
   final int endTime = 1020;
+  final int day = 1440;
   /**
    * variant of the simulation
    * variant = 0: work on the tasks in order
@@ -82,6 +83,7 @@ public class Simulation {
    */
   private void runDay(){
     relativeTime = startTime;
+    time += startTime;
 
     while(relativeTime <  endTime && tasksNotDone()) {
       if(currentTask != null) {
@@ -91,6 +93,8 @@ public class Simulation {
       }
       addTasksToQueue();
     }
+
+    time += day - endTime;
   }
 
   /**
@@ -150,6 +154,7 @@ public class Simulation {
     // add task to queue if there is no current task and the queue is empty
     if(currentTask == null && taskQueue.size() == 0 && tasks.size() != 0){
       time = tasks.get(0).time;
+      relativeTime = time % day;
       taskQueue.add(tasks.get(0));
       tasks.remove(0);
     }
