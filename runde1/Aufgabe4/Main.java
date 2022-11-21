@@ -32,7 +32,7 @@ public class Main {
   public static ArrayList<Task> cloneTasks(ArrayList<Task> tasks){
     ArrayList<Task> newTasks = new ArrayList<>();
     for(Task task: tasks){
-      newTasks.add(new Task(task.time, task.duration));
+      newTasks.add(new Task(task.getTime(), task.getDuration()));
     }
     return newTasks;
   }
@@ -49,6 +49,11 @@ public class Main {
       sim1.run();
       double[] waitTimes1 = sim1.getWaitTimes();
       printWaitTimes(i, 1, waitTimes1[0], waitTimes1[1]);
+
+      Simulation sim2 = new Simulation(cloneTasks(tasks), 2);
+      sim2.run();
+      double[] waitTimes2 = sim2.getWaitTimes();
+      printWaitTimes(i, 2, waitTimes2[0], waitTimes2[1]);
     }
   }
 
@@ -61,8 +66,8 @@ public class Main {
    */
   public static void printWaitTimes(int i, int variant, double maxWaitTime, double averageWaitTime){
     System.out.printf("Input: fahrradwerkstatt%d.txt | Variant: %d\n", i, variant);
-    System.out.printf("  maximum waiting time: %.0f min\n", maxWaitTime);
-    System.out.printf("  average waiting time: %.2f min\n", averageWaitTime);
+    System.out.printf("  maximum waiting time: %.0f min / %.2f hours / %.2f days\n", maxWaitTime, maxWaitTime / 60, maxWaitTime / (60 * 24));
+    System.out.printf("  average waiting time: %.2f min / %.2f hours / %.2f days\n", averageWaitTime, averageWaitTime / 60, averageWaitTime / (60 * 24));
     System.out.println("----------------------------------------------------");
   }
 }

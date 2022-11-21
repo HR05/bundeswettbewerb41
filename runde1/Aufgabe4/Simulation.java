@@ -9,41 +9,22 @@ public class Simulation {
   /**
    * a list of all tasks which are going to be received
    */
-  ArrayList<Task> tasks;
+  private ArrayList<Task> tasks;
   /**
    * list of task which where received
    */
-  ArrayList<Task> taskQueue = new ArrayList<>();
+  private ArrayList<Task> taskQueue = new ArrayList<>();
   /**
    * task which is currently worked on
    */
-  Task currentTask = null;
-  /**
-   * 9h converted to minutes
-   * start of work day
-   */
-  final int startTime = 540;
-  /**
-   * 17h converted to minutes
-   * end of work day
-   */
-  final int endTime = 1020;
-  final int day = 1440;
+  private Task currentTask = null;
   /**
    * variant of the simulation
    * variant = 0: work on the tasks in order
    * variant = 1: work always on shortest task which in the taskQueue
    */
   int variant;
-  /**
-   * absolute time in minutes
-   */
-  int time = 0;
-  /**
-   * relative time in minutes
-   * maximum 1440 minutes (24h)
-   */
-  int relativeTime = 0;
+  Time time;
   /**
    * a list of all waiting times
    * the waiting time is the difference between the receiving time and the finishing time of the task
@@ -66,11 +47,20 @@ public class Simulation {
     return new double[]{maxWaitTime, averageWaitTime};
   }
 
+  public void addWaitingTimes(int time){
+    for(Task task: taskQueue){
+      task.addWaitingTime(time);
+    }
+    if(currentTask != null){
+      currentTask.addWaitingTime(time);
+    }
+  }
+
   /**
    * run the simulation until all tasks are finished
    */
   public void run(){
-    time = 0;
+    time = new Time(540, 1020); // 9h, 17h
     while(tasksNotDone()){
       runDay();
     }
@@ -82,10 +72,10 @@ public class Simulation {
    * ends at 17h or when all tasks are done
    */
   private void runDay(){
-    relativeTime = startTime;
-    time += startTime;
+    time.startDay();
+    addWaitingTimes(540); // 9h
 
-    while(relativeTime <  endTime && tasksNotDone()) {
+    while(time.isWorkTime() && tasksNotDone()) {
       if(currentTask != null) {
         workOnCurrentTask();
       }else{
@@ -94,7 +84,8 @@ public class Simulation {
       addTasksToQueue();
     }
 
-    time += day - endTime;
+    time.endDay();
+    addWaitingTimes(420); // 7h
   }
 
   /**
@@ -107,30 +98,34 @@ public class Simulation {
 
   private void workOnCurrentTask(){
     // look if task can be done before the end
-    int delta_time = endTime - relativeTime; // time left to work
-    if(delta_time < currentTask.duration){
-      // works on current task until the work day is over
-      currentTask.duration -= delta_time;
-      time += delta_time;
-      relativeTime = endTime;
-    }else{
-      // finishes current task
-      time += currentTask.duration;
-      relativeTime += currentTask.duration;
-      waitTime.add(time - currentTask.time);
+    if(currentTask.canBeFinished(time.workTimeLeft())){
+      int workTime = currentTask.finish();
+      addWaitingTimes(workTime);
+      time.add(workTime);
+      waitTime.add(currentTask.getWaitingTime());
       currentTask = null;
+    }else{
+      // works on current task until the work day is over
+      int workTime = time.workTimeLeft();
+      currentTask.work(workTime);
+      addWaitingTimes(workTime);
+      time.add(workTime);
     }
   }
 
   private void setCurrentTask(){
     if(taskQueue.size() != 0) {
       if (variant == 0) {
-        // select the tasks order
+        // select the tasks in order
         currentTask = taskQueue.get(0);
         taskQueue.remove(0);
       } else if (variant == 1) {
         // select always the shortest task
-        taskQueue.sort(Comparator.comparingInt(o -> o.duration));
+        taskQueue.sort(Comparator.comparingInt(Task::getDuration));
+        currentTask = taskQueue.get(0);
+        taskQueue.remove(0);
+      } else if (variant == 2) {
+        taskQueue.sort(Comparator.comparingDouble(o -> o.getDuration() - (double) o.getWaitingTime() / 10));
         currentTask = taskQueue.get(0);
         taskQueue.remove(0);
       }
@@ -141,8 +136,9 @@ public class Simulation {
     int addedTasks = 0;
     for(Task task: tasks){
       // task hasn't been received yet
-      if(task.time > time) break;
+      if(task.hasNotBeenReceived(time.getAbsolute())) break;
 
+      task.addWaitingTime(time.getAbsolute() - task.getTime());
       taskQueue.add(task);
       addedTasks++;
     }
@@ -153,10 +149,14 @@ public class Simulation {
 
     // add task to queue if there is no current task and the queue is empty
     if(currentTask == null && taskQueue.size() == 0 && tasks.size() != 0){
-      time = tasks.get(0).time;
-      relativeTime = time % day;
-      taskQueue.add(tasks.get(0));
-      tasks.remove(0);
+      Task task = tasks.get(0);
+      if(time.isInWorkTime(task.getTime())){
+        time.set(task.getTime());
+        taskQueue.add(task);
+        tasks.remove(0);
+      }else{
+        time.endWorkDay();
+      }
     }
   }
 }
